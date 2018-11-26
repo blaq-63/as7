@@ -25,49 +25,31 @@ function createMultTable(multiplierMinVal, multiplierMaxVal, multiplicandMinVal,
                 }
             } else {
                 if(firstCol) {
-                    
-                    // If it's not the first row and is the first column,
-                    // put the multiplicand in a <th>.
                     cell = document.createElement('th');
                     cellText = document.createTextNode(row);
                     cell.appendChild(cellText);
                     
                 } else {
-                    
-                    // If it's not the first row and isn't the first column,
-                    // put multiplier * multiplicand in a <td>.
                     cell = document.createElement('td');
                     cellText = document.createTextNode(row * col);
                     cell.appendChild(cellText);
                 }
             }
-            tableRow.appendChild(cell); // Add cell to row.
+            tableRow.appendChild(cell);
             firstCol = false;
         }
-        table.appendChild(tableRow); // Add row to table.
+        table.appendChild(tableRow);
         firstRow = false;
         firstCol = true;
     }
     return table;
 }
 
- /**
- * General purpose function that appends a given HTML element to a given parent
- * node as the parent node's child. Or, if the parent node already has a child
- * HTML element with the same ID as the given HTML element, the child HTML
- * element is replaced with the HTML element. 
- *
- * @param {HTMLElement} newHtmlElement - Element to append into parentNode.
- * @param {Node} parentNode - Node to append newHtmlElement into.
- *
- */
 function appendReplaceHtmlElement(newHtmlElement, parentNode) {
     var oldHtmlElement;
     if((oldHtmlElement = document.getElementById(newHtmlElement.id)) &&
-       oldHtmlElement.parentNode === parentNode) {
-           
-        // If DOM already has an HTML element with newHtmlElement's ID,
-        // and that existing element has the same parent, replace it.
+       oldHtmlElement.parentNode === parentNode) 
+       {
         parentNode.replaceChild(newHtmlElement, oldHtmlElement);
     } else {
         parentNode.appendChild(newHtmlElement);
@@ -93,58 +75,51 @@ if (typeof FormHandler == "undefined") {
                 } else {
                     return num1 >= num2;
                 }
-            },'Maximum {1} value must be >= minimum {1} value.'); // Error messag
+            },'Maximum {1} value must be >= minimum {1} value.');
 
             
-            // Defines validation rules 
             $('form').validate({
                 
                 // Define restrictions on form inputs.
                 rules: {
                     multiplierMin: {
-                        required: true, // Can't be empty.
-                        number:   true, // Must be a number.
-                        step:     1,     // Can't be a decimal.
-                        compareTo:      // Must be <= multiplierMax.
+                        required: true,
+                        number:   true,
+                        step:     1,   
+                        compareTo:     
                             ['multiplierMax', 'multiplier', true]
                     },
                     multiplierMax: {
                         required: true,
                         number:   true,
                         step:     1,
-                        compareTo:      // Must be >= multiplierMin.
+                        compareTo:
                             ['multiplierMin', 'multiplier', false]
                     },
                     multiplicandMin: {
                         required: true,
                         number:   true,
                         step:     1,
-                        compareTo:      // Must be <= multiplicandMax.
+                        compareTo:
                             ['multiplicandMax', 'multiplicand', true]
                     },
                     multiplicandMax: {
                         required: true,
                         number:   true,
                         step:     1,
-                        compareTo:      // Must be >= multiplicandMin.
+                        compareTo:
                             ['multiplicandMin', 'multiplicand', false]
                     }
                 },
                 
-                // Change where errors are shown on the page.
                 showErrors: function(error, errorMap) {
-                    // Let plugin do its default loading of errors.
                     this.defaultShowErrors();
                     
                     var isMaxError = false;
                     
-                    // Iterate over the messages to show.
                     errorMap.forEach(function(error) {
                         
                         if(error.method === 'compareTo') {
-                            
-                            // If the error is a compareTo error,
-                            // move the error to a shared error location.
                             isMaxError = true;
                             $('#' + error.element.name + '-error').empty();
                             var type = error.element.name.slice(0, -3);
@@ -154,8 +129,6 @@ if (typeof FormHandler == "undefined") {
                     
                     if(errorMap.length === 0 || !isMaxError ) {
                         
-                        // If the error no longer exists, remove
-                        // the error from the shared error location.
                         this.currentElements.each(function(index, element) {
                             var type = element.name.slice(0, -3);
                             $('#' + type + 'Error').empty();
@@ -163,7 +136,6 @@ if (typeof FormHandler == "undefined") {
                     }
                 },
                 
-                // Error messages for all non-custom form restrictions.
                 messages: {
                     multiplierMin: {
                         required: 'Value cannot be empty.',
@@ -187,9 +159,8 @@ if (typeof FormHandler == "undefined") {
                     }
                 },
                 
-                // If validation passes, create the multiplication table.
                 submitHandler: function(form, event) {
-                    event.preventDefault();  // Don't submit the form.
+                    event.preventDefault();
                     
                     var table = createMultTable(
                     form.elements['multiplierMin'].value,
@@ -203,10 +174,9 @@ if (typeof FormHandler == "undefined") {
         }
         
         return {
-            init: init // Make init function publicly accessible.
+            init: init
         };
     })();
 
-    // This nitializes the DOM-dependent javascript page
     document.addEventListener('DOMContentLoaded', FormHandler.init);
 };
